@@ -69,7 +69,11 @@ V1.12
 	-Add get and set ClickColor
 	-Add get and set BackgroundPanelColor
 V1.13
+	-Add AddMenuItemWithIcon
+	-Add get IconProperties
 	-Add get and set ItemHeight
+V1.14
+	-Text can now be multiline
 #End If
 
 #Event: ItemClicked(Index as Int,Tag as Object)
@@ -78,6 +82,10 @@ Sub Class_Globals
 	Private xui As XUI
 	Private mCallBack As Object
 	Private mEventName As String
+	Public Tag As Object
+	
+	Type ASPopupMenu_Item(Text As String,Icon As B4XBitmap,Value As Object)
+	Type ASPopupMenu_IconProperties(WidthHeight As Float,SideGap As Float,HorizontalAlignment As String)
 	
 	Type ASPM_ItemLabelProperties(TextColor As Int,xFont As B4XFont,TextAlignment_Vertical As String,TextAlignment_Horizontal As String,BackgroundColor As Int,ItemBackgroundColor As Int,LeftRightPadding As Float)
 	Type ASPM_TitleLabelProperties(TextColor As Int,xFont As B4XFont,TextAlignment_Vertical As String,TextAlignment_Horizontal As String,BackgroundColor As Int,ItemBackgroundColor As Int,LeftRightPadding As Float,Height As Float)
@@ -85,6 +93,7 @@ Sub Class_Globals
 	Private g_ItemLabelProperties As ASPM_ItemLabelProperties
 	Private g_TitleLabelProperties As ASPM_TitleLabelProperties
 	Private g_TriangleProperties As ASPM_TriangleProperties
+	Private g_IconProperties As ASPopupMenu_IconProperties
 	
 	Private xpnl_background As B4XView
 	Private background As B4XView
@@ -124,6 +133,11 @@ Public Sub Initialize(Parent As B4XView,CallBack As Object,EventName As String)
 	mCallBack = CallBack
 	mEventName = EventName
 	
+	xpnl_background = xui.CreatePanel("")
+	
+	Tag = xpnl_background.Tag
+	xpnl_background.Tag = Me
+	
 	g_OrientationVertical = getOrientationVertical_TOP
 	g_OrientationHorizontal = getOrientationHorizontal_MIDDLE
 	
@@ -133,7 +147,6 @@ Public Sub Initialize(Parent As B4XView,CallBack As Object,EventName As String)
 	
 	m_ClickColor = xui.Color_ARGB(152,255,255,255)
 	m_BackgroundPanelColor = xui.Color_ARGB(152,0,0,0)
-	xpnl_background = xui.CreatePanel("")
 	Parent.AddView(xpnl_background,0,0,0,0)
 	xpnl_background.Visible = False
 
@@ -141,6 +154,7 @@ Public Sub Initialize(Parent As B4XView,CallBack As Object,EventName As String)
 	g_ItemLabelProperties = CreateASPM_ItemLabelProperties(xui.Color_White,xui.CreateDefaultFont(16),"CENTER","CENTER",xui.Color_ARGB(152,255,255,255),xui.Color_ARGB(255,32, 33, 37),IIf(xui.IsB4J,1dip,5dip))
 	g_TitleLabelProperties = CreateASPM_TitleLabelProperties(xui.Color_White,xui.CreateDefaultBoldFont(18),"CENTER","CENTER",xui.Color_ARGB(152,255,255,255),xui.Color_ARGB(255,32, 33, 37),5dip,60dip)
 	g_TriangleProperties = CreateASPM_TriangleProperties(xui.Color_White,20dip,10dip,-1,-1)
+	g_IconProperties = CreateASPopupMenu_IconProperties(30dip,5dip,getOrientationHorizontal_LEFT)
 	
 	xpnl_background.Color = g_ItemLabelProperties.ItemBackgroundColor
 	
@@ -151,24 +165,47 @@ Public Sub Resize(parent_width As Float,parent_height As Float)
 	max_y = parent_height
 End Sub
 
-Public Sub AddMenuItem(text As String,tag As Object)
-	
-	Dim xpnl_item_background As B4XView = xui.CreatePanel("item")
-	xpnl_item_background.Tag = "item"
-	xpnl_item_background.Color = g_ItemLabelProperties.ItemBackgroundColor
-	Dim xlbl_text As B4XView = CreateLabel("")
-	xlbl_text.Tag = tag
-	xlbl_text.TextColor = g_ItemLabelProperties.TextColor
-	xlbl_text.Font = g_ItemLabelProperties.xFont
-	xlbl_text.Text = text
-	xlbl_text.SetTextAlignment(g_ItemLabelProperties.TextAlignment_Vertical,g_ItemLabelProperties.TextAlignment_Horizontal)
-	xpnl_item_background.AddView(xlbl_text,0,0,0,0)
-	
-	xpnl_background.AddView(xpnl_item_background,0,0,0,0)
-	g_item_count = g_item_count +1
+Public Sub AddMenuItem(Text As String,Value As Object)
+	AddMenuItemIntern(Text,Null,Value)
 End Sub
 
-Public Sub AddTitle(Text As String, height As Float)
+Public Sub AddMenuItemWithIcon(Text As String,Icon As B4XBitmap,Value As Object)
+	AddMenuItemIntern(Text,Icon,Value)
+End Sub
+
+Private Sub AddMenuItemIntern(Text As String,Icon As B4XBitmap,Value As Object)
+	
+	Dim xpnl_ItemBackground As B4XView = xui.CreatePanel("item")
+	xpnl_ItemBackground.Tag = "item"
+	xpnl_ItemBackground.Color = g_ItemLabelProperties.ItemBackgroundColor
+	Dim xlbl_Text As B4XView = CreateLabel("")
+	#If B4J
+	xlbl_Text.As(Label).WrapText = True
+	#Else If B4I
+	xlbl_Text.As(Label).Multiline = True
+	#Else If B4A
+	xlbl_Text.As(Label).SingleLine = False
+	#End If
+	xlbl_Text.Tag = CreateASPopupMenu_Item(Text,Icon,Value)
+	xlbl_Text.TextColor = g_ItemLabelProperties.TextColor
+	xlbl_Text.Font = g_ItemLabelProperties.xFont
+	xlbl_Text.Text = Text
+	xlbl_Text.SetTextAlignment(g_ItemLabelProperties.TextAlignment_Vertical,g_ItemLabelProperties.TextAlignment_Horizontal)
+	xpnl_ItemBackground.AddView(xlbl_Text,0,0,2dip,2dip)
+	
+	If Icon.IsInitialized Then
+		
+		Dim xiv_Icon As B4XView = CreateImageView
+		xpnl_ItemBackground.AddView(xiv_Icon,0,0,2dip,2dip)
+		
+	End If
+	
+	xpnl_background.AddView(xpnl_ItemBackground,0,0,0,0)
+	g_item_count = g_item_count +1
+	
+End Sub
+
+Public Sub AddTitle(Text As String, Height As Float)
 	
 	Dim xpnl_item_background As B4XView = xui.CreatePanel("item")
 	xpnl_item_background.Tag = "title"
@@ -181,7 +218,7 @@ Public Sub AddTitle(Text As String, height As Float)
 	xlbl_text.Color = g_TitleLabelProperties.BackgroundColor
 	xpnl_item_background.Color = g_TitleLabelProperties.BackgroundColor
 	xpnl_item_background.AddView(xlbl_text,0,0,0,0)
-	g_TitleLabelProperties.Height = height
+	g_TitleLabelProperties.Height = Height
 	xpnl_background.AddView(xpnl_item_background,0,0,0,0)
 	HasTitle = True
 End Sub
@@ -237,6 +274,10 @@ Public Sub getMenuPanel As B4XView
 	Return xpnl_background
 End Sub
 
+Public Sub getIconProperties As ASPopupMenu_IconProperties
+	Return g_IconProperties
+End Sub
+
 'checks if the menu is open
 Public Sub getisOpen As Boolean
 	Return g_isOpen
@@ -278,22 +319,35 @@ Private Sub UpdateViews(width As Float)
 	
 	For i = 0 To xpnl_background.NumberOfViews -1
 		Dim xpnl_item_background As B4XView = xpnl_background.GetView(i)
-		If xpnl_item_background.Tag = "item" Then
-			Dim xlbl_text As B4XView = xpnl_item_background.GetView(0)
-			
-			xpnl_item_background.SetLayoutAnimated(0,0,tmp_item_padding + IIF2(HasTitle = False,0,tmp_divider_padding) + (i - tmp_index_padding) * (m_ItemHeight + tmp_divider_padding),width,m_ItemHeight)
-'			If (i - tmp_index_padding) = 0 And g_DividerEnabled Then
-'				xpnl_item_background.Top = xpnl_item_background.Top + tmp_divider_padding
-'			End If
-			xlbl_text.SetLayoutAnimated(0,0 + g_ItemLabelProperties.LeftRightPadding,0,xpnl_item_background.Width - (g_ItemLabelProperties.LeftRightPadding*2),xpnl_item_background.Height)
-		Else if xpnl_item_background.Tag = "title" Then
-			Dim xlbl_text As B4XView = xpnl_item_background.GetView(0)
-			xpnl_item_background.SetLayoutAnimated(0,0,0,width,g_TitleLabelProperties.Height)
-			xlbl_text.SetLayoutAnimated(0,0 + g_ItemLabelProperties.LeftRightPadding,0,xpnl_item_background.Width - (g_ItemLabelProperties.LeftRightPadding*2),xpnl_item_background.Height)
-		Else if xpnl_item_background.Tag = "divider" Then
-			xpnl_item_background.SetLayoutAnimated(0,0,0,width,g_DividerHeight)
-			
-		End If
+		
+		Select xpnl_item_background.Tag.As(String)
+			Case "item"
+				Dim xlbl_text As B4XView = xpnl_item_background.GetView(0)
+				xpnl_item_background.SetLayoutAnimated(0,0,tmp_item_padding + IIF2(HasTitle = False,0,tmp_divider_padding) + (i - tmp_index_padding) * (m_ItemHeight + tmp_divider_padding),width,m_ItemHeight)
+
+				Dim Item As ASPopupMenu_Item = xlbl_text.Tag
+
+				If Item.Icon.IsInitialized Then
+					
+					Dim xiv_Icon As B4XView = xpnl_item_background.GetView(1)
+					xiv_Icon.SetBitmap(Item.Icon)
+					If g_IconProperties.HorizontalAlignment = getOrientationHorizontal_RIGHT Then
+						xiv_Icon.SetLayoutAnimated(0,xpnl_item_background.Width - g_IconProperties.SideGap - g_IconProperties.WidthHeight,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
+					Else
+						xiv_Icon.SetLayoutAnimated(0,g_IconProperties.SideGap,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
+					End If
+					
+				End If
+		
+				xlbl_text.SetLayoutAnimated(0,g_ItemLabelProperties.LeftRightPadding + IIf(Item.Icon.IsInitialized And g_IconProperties.HorizontalAlignment = getOrientationHorizontal_LEFT,g_IconProperties.WidthHeight + g_IconProperties.SideGap,0),0,xpnl_item_background.Width - (g_ItemLabelProperties.LeftRightPadding*2) - IIf(Item.Icon.IsInitialized And g_IconProperties.HorizontalAlignment = getOrientationHorizontal_RIGHT,g_IconProperties.WidthHeight - g_IconProperties.SideGap,0),xpnl_item_background.Height)
+			Case "title"
+				Dim xlbl_text As B4XView = xpnl_item_background.GetView(0)
+				xpnl_item_background.SetLayoutAnimated(0,0,0,width,g_TitleLabelProperties.Height)
+				xlbl_text.SetLayoutAnimated(0,0 + g_ItemLabelProperties.LeftRightPadding,0,xpnl_item_background.Width - (g_ItemLabelProperties.LeftRightPadding*2),xpnl_item_background.Height)
+			Case "divider"
+				xpnl_item_background.SetLayoutAnimated(0,0,0,width,g_DividerHeight)
+		End Select
+	
 	Next
 		
 	For i = 0 To xpnl_background.NumberOfViews -1
@@ -672,6 +726,12 @@ Private Sub CreateLabel(EventName As String) As B4XView
 	Return tmp_lbl
 End Sub
 
+Private Sub CreateImageView As B4XView
+	Dim iv As ImageView
+	iv.Initialize("")
+	Return iv
+End Sub
+
 #If B4J
 Private Sub item_MouseClicked (EventData As MouseEvent)
 	ClickItem(Sender)
@@ -703,9 +763,9 @@ Private Sub ClickItem(xpnl_item_background As B4XView)
 			If xpnl_background.GetView(i) = xpnl_item_background Then
 				
 				If HasTitle Then
-					ItemClicked(i -1,xpnl_item_background.GetView(0).Tag)
+					ItemClicked(i -1,xpnl_item_background.GetView(0).Tag.As(ASPopupMenu_Item).Value)
 				Else
-					ItemClicked(i,xpnl_item_background.GetView(0).Tag)
+					ItemClicked(i,xpnl_item_background.GetView(0).Tag.As(ASPopupMenu_Item).Value)
 				End If
 				If g_CloseAfterItemClick = True Then CloseMenu
 			End If
@@ -718,7 +778,7 @@ End Sub
 'sets the item background color for all items
 Public Sub setItemBackgroundColor(crl As Int)
 	g_ItemLabelProperties.ItemBackgroundColor = crl
-	xpnl_background.Color = g_ItemLabelProperties.ItemBackgroundColor
+	xpnl_background.Color = crl
 	For i = 0 To xpnl_background.NumberOfViews -1
 	Dim xpnl_item_background As B4XView = xpnl_background.GetView(i)
 		xpnl_item_background.Color = crl
@@ -772,7 +832,7 @@ End Sub
 
 #Region Functions
 
-Private Sub GetARGB(Color As Int) As Int()
+Private Sub GetARGB(Color As Int) As Int() 'ignore
 	Dim res(4) As Int
 	res(0) = Bit.UnsignedShiftRight(Bit.And(Color, 0xff000000), 24)
 	res(1) = Bit.UnsignedShiftRight(Bit.And(Color, 0xff0000), 16)
@@ -855,11 +915,28 @@ Sub ViewScreenPosition (view As B4XView) As Int()
 	Return Array As Int(leftTop(0), leftTop(1))
 End Sub
 
+'https://www.b4x.com/android/forum/threads/fontawesome-to-bitmap.95155/post-603250
+Public Sub FontToBitmap (text As String, IsMaterialIcons As Boolean, FontSize As Float, color As Int) As B4XBitmap
+	Dim xui As XUI
+	Dim p As B4XView = xui.CreatePanel("")
+	p.SetLayoutAnimated(0, 0, 0, 32dip, 32dip)
+	Dim cvs1 As B4XCanvas
+	cvs1.Initialize(p)
+	Dim fnt As B4XFont
+	If IsMaterialIcons Then fnt = xui.CreateMaterialIcons(FontSize) Else fnt = xui.CreateFontAwesome(FontSize)
+	Dim r As B4XRect = cvs1.MeasureText(text, fnt)
+	Dim BaseLine As Int = cvs1.TargetRect.CenterY - r.Height / 2 - r.Top
+	cvs1.DrawText(text, cvs1.TargetRect.CenterX, BaseLine, fnt, color, "CENTER")
+	Dim b As B4XBitmap = cvs1.CreateBitmap
+	cvs1.Release
+	Return b
+End Sub
+
 #End Region
 
-Private Sub ItemClicked(index As Int,tag As Object)
+Private Sub ItemClicked(Index As Int,Value As Object)
 	If xui.SubExists(mCallBack,mEventName & "_ItemClicked",2) Then
-		CallSub3(mCallBack,mEventName & "_ItemClicked",index,tag)
+		CallSub3(mCallBack,mEventName & "_ItemClicked",Index,Value)
 	End If
 End Sub
 
@@ -902,5 +979,23 @@ Public Sub CreateASPM_TriangleProperties (Color As Int, Width As Float, Height A
 	t1.Height = Height
 	t1.Left = Left
 	t1.Top = Top
+	Return t1
+End Sub
+
+Public Sub CreateASPopupMenu_Item (Text As String, Icon As B4XBitmap, Value As Object) As ASPopupMenu_Item
+	Dim t1 As ASPopupMenu_Item
+	t1.Initialize
+	t1.Text = Text
+	t1.Icon = Icon
+	t1.Value = Value
+	Return t1
+End Sub
+
+Public Sub CreateASPopupMenu_IconProperties (WidthHeight As Float, SideGap As Float, HorizontalAlignment As String) As ASPopupMenu_IconProperties
+	Dim t1 As ASPopupMenu_IconProperties
+	t1.Initialize
+	t1.WidthHeight = WidthHeight
+	t1.SideGap = SideGap
+	t1.HorizontalAlignment = HorizontalAlignment
 	Return t1
 End Sub

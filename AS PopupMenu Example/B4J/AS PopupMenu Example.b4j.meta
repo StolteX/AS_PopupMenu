@@ -7,6 +7,6 @@ ModuleBreakpoints2=
 ModuleClosedNodes0=1,4
 ModuleClosedNodes1=
 ModuleClosedNodes2=1
-NavigationStack=ASPopupMenu,item_MouseExited,681,0,ASPopupMenu,setItemBackgroundColor,709,0,B4XMainPage,Class_Globals,14,0,B4XMainPage,B4XPage_Created,41,2,ASPopupMenu,RemoveDividers,229,0,ASPopupMenu,getMenuPanel,230,3,ASPopupMenu,Class_Globals,109,0,ASPopupMenu,xpnl_touch_MouseClicked,559,0,ASPopupMenu,setMenuCornerRadius,578,0,ASPopupMenu,Initialize,124,2
+NavigationStack=ASPopupMenu,Initialize,124,2,ASPopupMenu,AddMenuItem,160,0,ASPopupMenu,AddMenuItemWithIcon,173,0,ASPopupMenu,AddMenuItemIntern,178,6,ASPopupMenu,AddDivider,234,0,ASPopupMenu,Class_Globals,91,0,ASPopupMenu,ClickItem,771,0,ASPopupMenu,OpenMenu,449,0,ASPopupMenu,setItemBackgroundColor,774,5,B4XMainPage,B4XPage_Created,38,6
 SelectedBuild=0
 VisibleModules=2,1

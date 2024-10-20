@@ -38,11 +38,11 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	
 	aspm_main.OrientationVertical = aspm_main.OrientationVertical_BOTTOM
 	
-	aspm_main.ItemLabelProperties.BackgroundColor = xui.Color_ARGB(152,0,0,0)'black
-	
+	aspm_main.ItemLabelProperties.BackgroundColor = xui.Color_ARGB(0,0,0,0)'black
+	aspm_main.ItemBackgroundColor = xui.Color_White
 	aspm_main.DividerEnabled = True
 	aspm_main.DividerHeight = 2dip
-	aspm_main.DividerColor = xui.Color_White
+	aspm_main.DividerColor = xui.Color_ARGB(152,0,0,0)
 	
 	aspm_main.TitleLabelProperties.BackgroundColor = xui.Color_White
 	aspm_main.TitleLabelProperties.TextColor = xui.Color_Black
