@@ -74,6 +74,11 @@ V1.13
 	-Add get and set ItemHeight
 V1.14
 	-Text can now be multiline
+V1.15
+	-B4I Improvements - the entire screen is now used for the background shadow
+		-When the navigation bar was hidden, there was an area at the top that did not go dark when the menu was opened
+		-The height of the area is now determined and the gap closed
+		-B4XPages is now required in B4I
 #End If
 
 #Event: ItemClicked(Index as Int,Tag as Object)
@@ -126,6 +131,7 @@ Sub Class_Globals
 	Private m_ClickColor As Int
 	Private m_BackgroundPanelColor As Int
 	Private m_CornerRadius As Float
+	Private m_TopBarOffset As Float = 0
 End Sub
 
 'Initializes the object. You can add parameters to this method if needed.
@@ -403,7 +409,6 @@ Public Sub OpenMenu(view As B4XView,width As Float)
 		For i = 0 To xpnl_background.NumberOfViews -1
 			total_height = total_height + xpnl_background.GetView(i).Height
 		Next
-
 	
 		'xpnl_background.SetLayoutAnimated(0,0,view.Top - 50dip,width,tmp_item_padding + g_item_count*item_height)
 		xpnl_background.SetLayoutAnimated(0,0,view.Top - 50dip,width,total_height)
@@ -441,6 +446,10 @@ Public Sub OpenMenu(view As B4XView,width As Float)
 			top = top + view.Height
 		End If
 	
+		#If B4I
+			m_TopBarOffset = B4XPages.GetNativeParent(B4XPages.GetManager.GetTopPage.B4XPage).RootPanel.Top
+	    #End If
+	
 		If g_OrientationHorizontal = getOrientationHorizontal_LEFT Then
 	
 		else If g_OrientationHorizontal = getOrientationHorizontal_MIDDLE Then
@@ -459,14 +468,14 @@ Public Sub OpenMenu(view As B4XView,width As Float)
 		background = xui.CreatePanel("xpnl_touch")
 		background.SetColorAnimated(OpenDurationMs,xui.Color_Transparent, m_BackgroundPanelColor) 'color animation
 	
-		xpnl_background.Parent.AddView(background,0,0,xpnl_background.Parent.Width,xpnl_background.Parent.Height)
+		xpnl_background.Parent.AddView(background,0,-m_TopBarOffset,xpnl_background.Parent.Width,xpnl_background.Parent.Height + m_TopBarOffset)
 		xpnl_background.BringToFront
 		xpnl_background.SetVisibleAnimated(OpenDurationMs,True)
 
 		If m_ShowTriangle = True Then
 			xpnl_Triangle = xui.CreatePanel("")
 			xpnl_Triangle.Color = xui.Color_Transparent
-			background.AddView(xpnl_Triangle,xpnl_background.Left + g_TriangleProperties.Width,xpnl_background.Top - g_TriangleProperties.Height,g_TriangleProperties.Width,g_TriangleProperties.Height)
+			background.AddView(xpnl_Triangle,xpnl_background.Left + g_TriangleProperties.Width,xpnl_background.Top - g_TriangleProperties.Height + m_TopBarOffset,g_TriangleProperties.Width,g_TriangleProperties.Height)
 
 			Dim xCV As B4XCanvas
 			xCV.Initialize(xpnl_Triangle)
@@ -510,6 +519,10 @@ Public Sub OpenMenu2(parent As B4XView,width As Float)
 		AddDivider
 		UpdateViews(width)
 
+		#If B4I
+		m_TopBarOffset = B4XPages.GetNativeParent(B4XPages.GetManager.GetTopPage.B4XPage).RootPanel.Top
+	    #End If
+
 		Dim total_height As Float = 0
 		For i = 0 To xpnl_background.NumberOfViews -1
 			total_height = total_height + xpnl_background.GetView(i).Height
@@ -519,7 +532,7 @@ Public Sub OpenMenu2(parent As B4XView,width As Float)
 		background = xui.CreatePanel("xpnl_touch")
 		background.SetColorAnimated(OpenDurationMs,xui.Color_Transparent,m_BackgroundPanelColor)
 	
-		xpnl_background.Parent.AddView(background,0,0,xpnl_background.Parent.Width,xpnl_background.Parent.Height)
+		xpnl_background.Parent.AddView(background,0,-m_TopBarOffset,xpnl_background.Parent.Width,xpnl_background.Parent.Height + m_TopBarOffset)
 		xpnl_background.BringToFront
 		xpnl_background.SetVisibleAnimated(OpenDurationMs,True)
 	
@@ -541,6 +554,10 @@ Public Sub OpenMenuAdvanced(Left As Float,Top As Float,Width As Float)
 		AddDivider
 		UpdateViews(Width)
 
+		#If B4I
+		m_TopBarOffset = B4XPages.GetNativeParent(B4XPages.GetManager.GetTopPage.B4XPage).RootPanel.Top
+	    #End If
+
 		Dim total_height As Float = 0
 		For i = 0 To xpnl_background.NumberOfViews -1
 			total_height = total_height + xpnl_background.GetView(i).Height
@@ -550,14 +567,14 @@ Public Sub OpenMenuAdvanced(Left As Float,Top As Float,Width As Float)
 		background = xui.CreatePanel("xpnl_touch")
 		background.SetColorAnimated(OpenDurationMs,xui.Color_Transparent,m_BackgroundPanelColor)
 	
-		xpnl_background.Parent.AddView(background,0,0,xpnl_background.Parent.Width,xpnl_background.Parent.Height)
+		xpnl_background.Parent.AddView(background,0,-m_TopBarOffset,xpnl_background.Parent.Width,xpnl_background.Parent.Height + m_TopBarOffset)
 		xpnl_background.BringToFront
 		xpnl_background.SetVisibleAnimated(OpenDurationMs,True)
 	
 		If m_ShowTriangle = True Then
 			xpnl_Triangle = xui.CreatePanel("")
 			xpnl_Triangle.Color = xui.Color_Transparent
-			background.AddView(xpnl_Triangle,xpnl_background.Left + g_TriangleProperties.Width,IIf(g_TriangleProperties.Top = -1,xpnl_background.Top,g_TriangleProperties.Top) - g_TriangleProperties.Height,g_TriangleProperties.Width,g_TriangleProperties.Height)
+			background.AddView(xpnl_Triangle,xpnl_background.Left + g_TriangleProperties.Width,IIf(g_TriangleProperties.Top = -1,xpnl_background.Top,g_TriangleProperties.Top) - g_TriangleProperties.Height + m_TopBarOffset,g_TriangleProperties.Width,g_TriangleProperties.Height)
 
 			Dim xCV As B4XCanvas
 			xCV.Initialize(xpnl_Triangle)
@@ -894,6 +911,7 @@ Sub ViewScreenPosition (view As B4XView) As Int()
 	#IF B4A
 	Dim JO As JavaObject = view
 	JO.RunMethod("getLocationOnScreen", Array As Object(leftTop))
+	leftTop(1) = leftTop(1) - view.Height
 	#Else If B4I
 	'https://www.b4x.com/android/forum/threads/absolute-position-of-view.56821/#content
 	Dim parent As B4XView = view

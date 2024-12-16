@@ -14,7 +14,7 @@ Version=8.45
 @EndOfDesignText@
 'Code module
 #Region  Project Attributes 
-	#ApplicationLabel: B4i Example
+	#ApplicationLabel: AS PopupMenu Example
 	#Version: 1.0.0 
 	'Orientation possible values: Portrait, LandscapeLeft, LandscapeRight and PortraitUpsideDown
 	#iPhoneOrientations: Portrait, LandscapeLeft, LandscapeRight
@@ -35,7 +35,7 @@ Private Sub Application_Start (Nav As NavigationController)
 	NavControl = Nav
 	Dim PagesManager As B4XPagesManager
 	PagesManager.Initialize(NavControl)
-	
+	NavControl.NavigationBarVisible = False
 End Sub
 
 'Template version: B4i-1.0
