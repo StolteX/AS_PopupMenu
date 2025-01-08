@@ -79,6 +79,8 @@ V1.15
 		-When the navigation bar was hidden, there was an area at the top that did not go dark when the menu was opened
 		-The height of the area is now determined and the gap closed
 		-B4XPages is now required in B4I
+V1.16
+	-BugFix If the icon horizontal alignment is set to center and there is no text, the icon is now displayed in the center
 #End If
 
 #Event: ItemClicked(Index as Int,Tag as Object)
@@ -337,11 +339,17 @@ Private Sub UpdateViews(width As Float)
 					
 					Dim xiv_Icon As B4XView = xpnl_item_background.GetView(1)
 					xiv_Icon.SetBitmap(Item.Icon)
-					If g_IconProperties.HorizontalAlignment = getOrientationHorizontal_RIGHT Then
-						xiv_Icon.SetLayoutAnimated(0,xpnl_item_background.Width - g_IconProperties.SideGap - g_IconProperties.WidthHeight,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
-					Else
-						xiv_Icon.SetLayoutAnimated(0,g_IconProperties.SideGap,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
-					End If
+					
+					If g_IconProperties.HorizontalAlignment = getOrientationHorizontal_MIDDLE And Item.Text <> "" Then g_IconProperties.HorizontalAlignment = getOrientationHorizontal_LEFT
+					
+					Select g_IconProperties.HorizontalAlignment
+						Case getOrientationHorizontal_LEFT
+							xiv_Icon.SetLayoutAnimated(0,g_IconProperties.SideGap,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
+						Case getOrientationHorizontal_MIDDLE
+							xiv_Icon.SetLayoutAnimated(0,xpnl_item_background.Width/2 - g_IconProperties.WidthHeight/2 - g_IconProperties.SideGap,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
+						Case getOrientationHorizontal_RIGHT
+							xiv_Icon.SetLayoutAnimated(0,xpnl_item_background.Width - g_IconProperties.SideGap - g_IconProperties.WidthHeight,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
+					End Select
 					
 				End If
 		
