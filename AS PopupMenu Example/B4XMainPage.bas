@@ -40,9 +40,9 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 	
 	aspm_main.ItemLabelProperties.BackgroundColor = xui.Color_ARGB(0,0,0,0)'black
 	aspm_main.ItemBackgroundColor = xui.Color_White
-	aspm_main.DividerEnabled = True
-	aspm_main.DividerHeight = 2dip
-	aspm_main.DividerColor = xui.Color_ARGB(152,0,0,0)
+'	aspm_main.DividerEnabled = True
+'	aspm_main.DividerHeight = 2dip
+'	aspm_main.DividerColor = xui.Color_ARGB(152,0,0,0)
 	
 	aspm_main.TitleLabelProperties.BackgroundColor = xui.Color_White
 	aspm_main.TitleLabelProperties.TextColor = xui.Color_Black
@@ -50,8 +50,22 @@ Private Sub B4XPage_Created (Root1 As B4XView)
 
 	aspm_main.MenuCornerRadius = 10dip
 
+'	For i = 0 To 4 -1
+'		aspm_main.ItemLabelProperties.ItemBackgroundColor = xui.Color_ARGB(255,Rnd(1,256), Rnd(1,256), Rnd(1,256))
+'		aspm_main.AddMenuItem("Test_" & (i +1),"item_" & i)
+'	Next
+	
+	aspm_main.ItemLabelProperties.TextColor = xui.Color_Black
+	
 	For i = 0 To 4 -1
-		aspm_main.ItemLabelProperties.ItemBackgroundColor = xui.Color_ARGB(255,Rnd(1,256), Rnd(1,256), Rnd(1,256))
+		
+		If i Mod 2 = 0 Then
+			aspm_main.ItemLabelProperties.ItemBackgroundColor = xui.Color_ARGB(255,233, 233, 233)
+			Else
+			aspm_main.ItemLabelProperties.ItemBackgroundColor = xui.Color_White
+		End If
+		
+
 		aspm_main.AddMenuItem("Test_" & (i +1),"item_" & i)
 	Next
 	
@@ -74,6 +88,7 @@ Sub xlbl_open_Click
 	aspm_main.TriangleProperties.Left = 100dip/2 - aspm_main.TriangleProperties.Width/2
 
 	aspm_main.OpenMenu(xlbl_open,100dip)
+	
 End Sub
 #End If
 

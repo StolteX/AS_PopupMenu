@@ -81,6 +81,8 @@ V1.15
 		-B4XPages is now required in B4I
 V1.16
 	-BugFix If the icon horizontal alignment is set to center and there is no text, the icon is now displayed in the center
+V1.17
+	-BugFix on CloseMenu thanks to @Mike1970
 #End If
 
 #Event: ItemClicked(Index as Int,Tag as Object)
@@ -346,7 +348,7 @@ Private Sub UpdateViews(width As Float)
 						Case getOrientationHorizontal_LEFT
 							xiv_Icon.SetLayoutAnimated(0,g_IconProperties.SideGap,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
 						Case getOrientationHorizontal_MIDDLE
-							xiv_Icon.SetLayoutAnimated(0,xpnl_item_background.Width/2 - g_IconProperties.WidthHeight/2 - g_IconProperties.SideGap,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
+								xiv_Icon.SetLayoutAnimated(0,xpnl_item_background.Width/2 - g_IconProperties.WidthHeight/2 - g_IconProperties.SideGap,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
 						Case getOrientationHorizontal_RIGHT
 							xiv_Icon.SetLayoutAnimated(0,xpnl_item_background.Width - g_IconProperties.SideGap - g_IconProperties.WidthHeight,xpnl_item_background.Height/2 - g_IconProperties.WidthHeight/2,g_IconProperties.WidthHeight,g_IconProperties.WidthHeight)
 					End Select
@@ -736,6 +738,7 @@ Public Sub setIsInSpecialContainer(value As Boolean)
 End Sub
 
 Public Sub CloseMenu
+	If Not(background.IsInitialized) Or Not(xpnl_background.IsInitialized) Then Return 
 	xpnl_background.SetVisibleAnimated(CloseDurationMs,False)
 	If xpnl_Triangle.IsInitialized = True Then xpnl_Triangle.Visible = False
 	background.RemoveViewFromParent

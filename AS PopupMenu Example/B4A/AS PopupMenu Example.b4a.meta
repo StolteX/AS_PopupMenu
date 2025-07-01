@@ -10,6 +10,6 @@ ModuleClosedNodes0=2,6
 ModuleClosedNodes1=
 ModuleClosedNodes2=
 ModuleClosedNodes3=1
-NavigationStack=B4XMainPage,Initialize,16,0,ASPopupMenu,Initialize,123,0,Main,Globals,20,0,Main,Activity_Create,28,6,ASPopupMenu,Class_Globals,82,0,ASPopupMenu,getBase,635,0,ASPopupMenu,getBackgroundPanel,636,4,ASPopupMenu,getTitleLabelProperties,628,0,ASPopupMenu,AddMenuItemIntern,178,2,B4XMainPage,B4XPage_Created,45,6,ASPopupMenu,ViewScreenPosition,884,2
+NavigationStack=ASPopupMenu,setBackgroundPanelColor,687,0,ASPopupMenu,setMenuCornerRadius,690,0,B4XMainPage,xlbl_open_Click,87,0,ASPopupMenu,OpenMenu,511,0,ASPopupMenu,Initialize,165,0,ASPopupMenu,Class_Globals,133,0,ASPopupMenu,ClickItem,796,0,ASPopupMenu,setItemBackgroundColor,799,0,B4XMainPage,B4XPage_Created,65,5
 SelectedBuild=0
 VisibleModules=2,1
